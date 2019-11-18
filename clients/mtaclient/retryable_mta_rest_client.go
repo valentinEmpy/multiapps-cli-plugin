@@ -65,6 +65,16 @@ func (c RetryableMtaRestClient) GetMtaOperation(operationID, embed string) (*mod
 	}
 	return resp.(*models.Operation), err
 }
+func (c RetryableMtaRestClient) UpdateAccessTokenForOperation(operationID string) (string, error) {
+	updateAccessTokenForOperationCb := func() (interface{}, error) {
+		return c.mtaClient.UpdateAccessTokenForOperation(operationID)
+	}
+	_, err := baseclient.CallWithRetry(updateAccessTokenForOperationCb, c.MaxRetriesCount, c.RetryInterval)
+	if err != nil {
+		return "", err
+	}
+	return "", nil
+}
 func (c RetryableMtaRestClient) GetMtaOperationLogs(operationID string) ([]*models.Log, error) {
 	getMtaOperationLogsCb := func() (interface{}, error) {
 		return c.mtaClient.GetMtaOperationLogs(operationID)

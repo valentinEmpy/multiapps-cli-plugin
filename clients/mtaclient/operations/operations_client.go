@@ -294,6 +294,30 @@ func (a *Client) GetOperationActions(params *GetOperationActionsParams, authInfo
 
 }
 
+func (a *Client) UpdateAccessTokenForOperation(params *UpdateAccessTokenForOperationParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateAccessTokenForOperationAccepted, error) {
+	if params == nil {
+		params = NewUpdateAccessTokenForOperationParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "UpdateAccessTokenForOperation",
+		Method:             "POST",
+		PathPattern:        "/operations/{operationId}/token",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &UpdateAccessTokenForOperationReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*UpdateAccessTokenForOperationAccepted), nil
+}
+
 /*
 StartMtaOperation Starts execution of a Multi-Target Application operation
 

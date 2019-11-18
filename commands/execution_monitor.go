@@ -66,6 +66,10 @@ func getAlreadyReportedOperationMessages(reportedOperationMessages []*models.Mes
 }
 
 func (m *ExecutionMonitor) Monitor() ExecutionStatus {
+	worker := NewWorker(5 * time.Second)
+	go worker.Run(func() {
+		m.mtaClient.UpdateAccessTokenForOperation(m.operationID)
+	})
 	totalRetries := m.retries
 	for {
 		operation, err := m.mtaClient.GetMtaOperation(m.operationID, m.embed)

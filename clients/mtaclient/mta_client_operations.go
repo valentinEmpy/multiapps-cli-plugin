@@ -17,6 +17,7 @@ type MtaClientOperations interface {
 	GetMtaOperations(last *int64, status []string) ([]*models.Operation, error)
 	GetMtas() ([]*models.Mta, error)
 	GetOperationActions(operationID string) ([]string, error)
+	UpdateAccessTokenForOperation(operationID string) (string, error)
 	StartMtaOperation(operation models.Operation) (ResponseHeader, error)
 	UploadMtaFile(file os.File) (*models.FileMetadata, error)
 	GetMtaOperationLogContent(operationID, logID string) (string, error)

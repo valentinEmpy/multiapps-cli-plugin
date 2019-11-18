@@ -2,13 +2,14 @@ package mtaclient
 
 import (
 	"context"
+	"net/http"
+	"os"
+
 	"github.com/cloudfoundry-incubator/multiapps-cli-plugin/clients/baseclient"
 	"github.com/cloudfoundry-incubator/multiapps-cli-plugin/clients/models"
 	"github.com/cloudfoundry-incubator/multiapps-cli-plugin/clients/mtaclient/operations"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-	"net/http"
-	"os"
 )
 
 const spacesURL string = "spaces/"
@@ -94,6 +95,22 @@ func (c MtaRestClient) GetMtaOperation(operationID, embed string) (*models.Opera
 		return nil, baseclient.NewClientError(err)
 	}
 	return resp.Payload, nil
+}
+func (c MtaRestClient) UpdateAccessTokenForOperation(operationID string) (string, error) {
+	params := &operations.UpdateAccessTokenForOperationParams{
+		Context:     context.TODO(),
+		OperationID: operationID,
+	}
+	token, err := c.TokenFactory.NewToken()
+	if err != nil {
+		return "", baseclient.NewClientError(err)
+	}
+	_, err = c.client.Operations.UpdateAccessTokenForOperation(params, token)
+	if err != nil {
+		return "", baseclient.NewClientError(err)
+	}
+
+	return "", nil
 }
 func (c MtaRestClient) GetMtaOperationLogs(operationID string) ([]*models.Log, error) {
 	params := &operations.GetMtaOperationLogsParams{
